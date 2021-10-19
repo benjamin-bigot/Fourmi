@@ -40,12 +40,19 @@ class Fourmi:
 class Fourmilliere:
     def __init__(self):
         self.graphe_salles = {}
+        self.pos_fourmi = {}
+
+    def add_fourmi(self, f):
+        self.pos_fourmi[f.position].append(f.nom)
 
     def add_salle(self, salle):
         self.graphe_salles[salle.nom] = salle.connexion
+        self.pos_fourmi[salle.nom] = list()
 
     def display(self):
         print(self.graphe_salles)
+
+    #def solve(self):
 
 
 Sv = Salle('Sv', 10)
@@ -77,14 +84,22 @@ F.display()
 
 f1 = Fourmi('f1')
 f1.init_position(Sv)
+F.add_fourmi(f1)
 f2 = Fourmi('f2')
 f2.init_position(Sv)
+F.add_fourmi(f2)
 f3 = Fourmi('f3')
 f3.init_position(Sv)
+F.add_fourmi(f3)
 f4 = Fourmi('f4')
 f4.init_position(Sv)
+F.add_fourmi(f4)
 f5 = Fourmi('f5')
 f5.init_position(Sv)
+F.add_fourmi(f5)
 f6 = Fourmi('f6')
 f6.init_position(Sv)
+F.add_fourmi(f6)
+
+print(F.pos_fourmi)
 
