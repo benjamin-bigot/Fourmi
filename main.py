@@ -25,14 +25,22 @@ class Fourmi:
     def __init__(self, nom):
         self.nom = nom
         self.position = None
+        self.moved = False
 
     def move(self, start, end):
         if end.is_full() is False:
             start.remove_fourmi()
             end.add_fourmi()
+            self.has_move()
             print(self.nom + " - " + start.nom + " - " + end.nom)
         else:
             print("Salle pleine")
+
+    def has_move(self):
+        self.moved = True
+
+    def reinit_move(self):
+        self.moved = False
 
 
 class Fourmilliere:
@@ -53,13 +61,16 @@ class Fourmilliere:
         self.graphe_salles[salle] = salle.connexion
         self.pos_fourmi[salle] = list()
 
-    def can_move(self):
-        for cle in self.pos_fourmi.keys():
-            for f in self.pos_fourmi[cle]:
-                for S in self.graphe_salles[f.position]:
-                    if S.is_full() is False:
-                        return True
+    def can_move(self, fourmi):
+        if fourmi.moved is False:
+            return True
         return False
+        #for cle in self.pos_fourmi.keys():
+        #    for f in self.pos_fourmi[cle]:
+        #        for S in self.graphe_salles[f.position]:
+        #            if S.is_full() is False:
+        #                return True
+        #return False
 
     def display_chemin(self):
         print("Chemins : ")
@@ -76,22 +87,27 @@ class Fourmilliere:
         print("\n")
 
     def solve(self):
-        nb_fourmi = 0
-        for _ in self.pos_fourmi.values():
-            nb_fourmi += 1
-        nb_fourmi -= 1
+        nb_fourmi = len(list(self.pos_fourmi.values())) - 1
         step = 1
         while len(self.pos_fourmi[self.end]) < nb_fourmi:
             print("Etape", step, ":")
+            for cle in self.pos_fourmi.keys():
+                for f in self.pos_fourmi[cle]:
+                    f.reinit_move()
             for cle in self.graphe_salles.keys():
-                while self.can_move() is True:
-                    for next_room in self.graphe_salles[cle]:
-                        for fourmi in self.pos_fourmi[cle]:
-                            if next_room.is_full() is False:
-                                self.remove_fourmi(fourmi, cle)
-                                self.add_fourmi(fourmi, next_room)
-                                fourmi.move(cle, next_room)
-                                break
+                for next_room in self.graphe_salles[cle]:
+                    for fourmi in self.pos_fourmi[cle]:
+                        if next_room.is_full() is False and self.can_move(fourmi) is True:
+                            self.remove_fourmi(fourmi, cle)
+                            self.add_fourmi(fourmi, next_room)
+                            fourmi.move(cle, next_room)
+                        #elif len(list(self.pos_fourmi[next_room])) > 0:
+                         #   for next_fourmi in self.pos_fourmi[next_room]:
+                          #      if self.can_move(next_fourmi) is False:
+                           #         break
+                            #    self.remove_fourmi(fourmi, cle)
+                             #   self.add_fourmi(fourmi, next_room)
+                              #  fourmi.move(cle, next_room)
             step += 1
 
 
@@ -100,7 +116,7 @@ S1 = Salle('S1', 1)
 S2 = Salle('S2', 1)
 S3 = Salle('S3', 2)
 S4 = Salle('S4', 1)
-S5 = Salle('S5', 3)
+S5 = Salle('S5', 2)
 Sd = Salle('Sd', 10)
 
 Sv.set_connexion(S1)
