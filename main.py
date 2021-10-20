@@ -53,6 +53,14 @@ class Fourmilliere:
         self.graphe_salles[salle] = salle.connexion
         self.pos_fourmi[salle] = list()
 
+    def can_move(self):
+        for cle in self.pos_fourmi.keys():
+            for f in self.pos_fourmi[cle]:
+                for S in self.graphe_salles[f.position]:
+                    if S.is_full() is False:
+                        return True
+        return False
+
     def display_chemin(self):
         print("Chemins : ")
         for cle, valeur in self.graphe_salles.items():
@@ -76,14 +84,14 @@ class Fourmilliere:
         while len(self.pos_fourmi[self.end]) < nb_fourmi:
             print("Etape", step, ":")
             for cle in self.graphe_salles.keys():
-                for fourmi in self.pos_fourmi[cle]:
+                while self.can_move() is True:
                     for next_room in self.graphe_salles[cle]:
-                        if next_room.is_full() is False:
-                            self.remove_fourmi(fourmi, cle)
-                            self.add_fourmi(fourmi, next_room)
-                            fourmi.move(cle, next_room)
-                            break
-                        break
+                        for fourmi in self.pos_fourmi[cle]:
+                            if next_room.is_full() is False:
+                                self.remove_fourmi(fourmi, cle)
+                                self.add_fourmi(fourmi, next_room)
+                                fourmi.move(cle, next_room)
+                                break
             step += 1
 
 
