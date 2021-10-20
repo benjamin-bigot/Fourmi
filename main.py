@@ -11,7 +11,7 @@ class Salle:
         return True
 
     def set_connexion(self, salle):
-        self.connexion.append(salle.nom)
+        self.connexion.append(salle)
 
     def add_fourmi(self):
         self.fourmi += 1
@@ -21,38 +21,68 @@ class Salle:
 
 
 class Fourmi:
+
     def __init__(self, nom):
         self.nom = nom
         self.position = None
 
-    def init_position(self, Sv):
-        self.position = Sv.nom
-
     def move(self, start, end):
         if end.is_full() is False:
-            start.remove_fourmi()
-            end.add_fourmi()
+            start.remove_fourmi(self, start)
+            end.add_fourmi(self, end)
             print(self.nom + " - " + start.nom + " - " + end.nom)
         else:
             print("Salle pleine")
 
 
 class Fourmilliere:
-    def __init__(self):
+    def __init__(self, end):
         self.graphe_salles = {}
         self.pos_fourmi = {}
+        self.end = end
 
-    def add_fourmi(self, f):
-        self.pos_fourmi[f.position].append(f.nom)
+    def add_fourmi(self, f, S):
+        self.pos_fourmi[S].append(f)
+        f.position = S
+
+    def remove_fourmi(self, f, S):
+        del self.pos_fourmi[S][self.pos_fourmi[S].index(f)]
+        f.position = None
 
     def add_salle(self, salle):
-        self.graphe_salles[salle.nom] = salle.connexion
-        self.pos_fourmi[salle.nom] = list()
+        self.graphe_salles[salle] = salle.connexion
+        self.pos_fourmi[salle] = list()
 
-    def display(self):
-        print(self.graphe_salles)
+    def display_chemin(self):
+        print("Chemins : ")
+        for cle, valeur in self.graphe_salles.items():
+            for i in range(len(valeur)):
+                print(cle.nom + " - " + valeur[i].nom)
+        print("\n")
 
-    #def solve(self):
+    def display_fourmi(self):
+        print("Position des fourmis : ")
+        for cle, valeur in self.pos_fourmi.items():
+            for i in range(len(valeur)):
+                print(valeur[i].nom + " - " + cle.nom)
+        print("\n")
+
+    def solve(self):
+        nb_fourmi = 0
+        for _ in self.pos_fourmi.values():
+            nb_fourmi += 1
+        nb_fourmi -= 1
+        step = 1
+        while len(self.pos_fourmi[self.end]) < nb_fourmi:
+            print("Etape", step, ":")
+            for cle in self.graphe_salles.keys():
+                for fourmi in self.pos_fourmi[cle]:
+                    for next_room in self.graphe_salles[cle]:
+                        if next_room.is_full() is False:
+
+                            fourmi.move(cle, next_room)
+                            break
+            step += 1
 
 
 Sv = Salle('Sv', 10)
@@ -72,7 +102,7 @@ S5.set_connexion(Sd)
 S2.set_connexion(Sd)
 S4.set_connexion(Sd)
 
-F = Fourmilliere()
+F = Fourmilliere(Sd)
 F.add_salle(Sv)
 F.add_salle(S1)
 F.add_salle(S2)
@@ -80,26 +110,18 @@ F.add_salle(S3)
 F.add_salle(S4)
 F.add_salle(S5)
 F.add_salle(Sd)
-F.display()
 
 f1 = Fourmi('f1')
-f1.init_position(Sv)
-F.add_fourmi(f1)
+F.add_fourmi(f1, Sv)
 f2 = Fourmi('f2')
-f2.init_position(Sv)
-F.add_fourmi(f2)
+F.add_fourmi(f2, Sv)
 f3 = Fourmi('f3')
-f3.init_position(Sv)
-F.add_fourmi(f3)
+F.add_fourmi(f3, Sv)
 f4 = Fourmi('f4')
-f4.init_position(Sv)
-F.add_fourmi(f4)
+F.add_fourmi(f4, Sv)
 f5 = Fourmi('f5')
-f5.init_position(Sv)
-F.add_fourmi(f5)
+F.add_fourmi(f5, Sv)
 f6 = Fourmi('f6')
-f6.init_position(Sv)
-F.add_fourmi(f6)
+F.add_fourmi(f6, Sv)
 
-print(F.pos_fourmi)
-
+F.display_chemin()
