@@ -28,8 +28,8 @@ class Fourmi:
 
     def move(self, start, end):
         if end.is_full() is False:
-            start.remove_fourmi(self, start)
-            end.add_fourmi(self, end)
+            start.remove_fourmi()
+            end.add_fourmi()
             print(self.nom + " - " + start.nom + " - " + end.nom)
         else:
             print("Salle pleine")
@@ -79,9 +79,11 @@ class Fourmilliere:
                 for fourmi in self.pos_fourmi[cle]:
                     for next_room in self.graphe_salles[cle]:
                         if next_room.is_full() is False:
-
+                            self.remove_fourmi(fourmi, cle)
+                            self.add_fourmi(fourmi, next_room)
                             fourmi.move(cle, next_room)
                             break
+                        break
             step += 1
 
 
@@ -124,4 +126,4 @@ F.add_fourmi(f5, Sv)
 f6 = Fourmi('f6')
 F.add_fourmi(f6, Sv)
 
-F.display_chemin()
+F.solve()
