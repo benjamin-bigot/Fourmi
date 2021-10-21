@@ -28,13 +28,10 @@ class Fourmi:
         self.moved = False
 
     def move(self, start, end):
-        if end.is_full() is False:
-            start.remove_fourmi()
-            end.add_fourmi()
-            self.has_move()
-            print(self.nom + " - " + start.nom + " - " + end.nom)
-        else:
-            print("Salle pleine")
+        start.remove_fourmi()
+        end.add_fourmi()
+        self.has_move()
+        print(self.nom + " - " + start.nom + " - " + end.nom)
 
     def has_move(self):
         self.moved = True
@@ -65,12 +62,6 @@ class Fourmilliere:
         if fourmi.moved is False:
             return True
         return False
-        #for cle in self.pos_fourmi.keys():
-        #    for f in self.pos_fourmi[cle]:
-        #        for S in self.graphe_salles[f.position]:
-        #            if S.is_full() is False:
-        #                return True
-        #return False
 
     def display_chemin(self):
         print("Chemins : ")
@@ -101,13 +92,12 @@ class Fourmilliere:
                             self.remove_fourmi(fourmi, cle)
                             self.add_fourmi(fourmi, next_room)
                             fourmi.move(cle, next_room)
-                        #elif len(list(self.pos_fourmi[next_room])) > 0:
-                         #   for next_fourmi in self.pos_fourmi[next_room]:
-                          #      if self.can_move(next_fourmi) is False:
-                           #         break
-                            #    self.remove_fourmi(fourmi, cle)
-                             #   self.add_fourmi(fourmi, next_room)
-                              #  fourmi.move(cle, next_room)
+                        elif len(list(self.pos_fourmi[next_room])) > 0 and self.can_move(fourmi) is True:
+                            for next_fourmi in self.pos_fourmi[next_room]:
+                                if self.can_move(next_fourmi) is True:
+                                    self.remove_fourmi(fourmi, cle)
+                                    self.add_fourmi(fourmi, next_room)
+                                    fourmi.move(cle, next_room)
             step += 1
 
 
