@@ -81,7 +81,9 @@ class Fourmilliere:
         nb_fourmi = len(list(self.pos_fourmi.values())) - 1
         step = 1
         while len(self.pos_fourmi[self.end]) < nb_fourmi:
-            print("Etape", step, ":")
+            print("\nEtape", step, ":")
+            self.display_fourmi()
+            print("Mouvements : ")
             for cle in self.pos_fourmi.keys():
                 for f in self.pos_fourmi[cle]:
                     f.reinit_move()
